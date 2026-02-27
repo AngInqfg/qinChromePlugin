@@ -295,7 +295,7 @@ defineExpose({
   height: calc(100% - 40px);
 }
 .main_content {
-  max-width: 1210px;
+  max-width: 1660px;
   height: 100%;
   padding: 10vh 0 5vh;
   margin: auto;
