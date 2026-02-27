@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "QIN-CHROME-PLUGIN",
+  "version": "1.0",
+  "description": "qin的导航",
+  "chrome_url_overrides": {
+    "newtab": "index.html"
+  },
+  "permissions": ["bookmarks", "topSites"],
+  "host_permissions": [
+    "https://fc-mp-d2710277-d07d-462e-99b0-59276137c9a6.next.bspapp.com/*"
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "name": "q-chrome-plugin",
+  "dependencies": {},
+  "extensions": {
+    "uni-cloud-jql": {}
+  }
+}
