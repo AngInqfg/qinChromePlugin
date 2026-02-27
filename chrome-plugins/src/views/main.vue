@@ -10,7 +10,11 @@ import {
   updateSite,
   removeSite,
 } from "../utils/chromeStorageLocal";
-import { getList as getRemoteList, updateList as updateRemoteList, removeSite as removeRemoteSite } from "../api/user";
+import {
+  getList as getRemoteList,
+  updateList as updateRemoteList,
+  removeSite as removeRemoteSite,
+} from "../api/user";
 
 const allList = ref([]);
 const currentList = ref([]);
@@ -20,7 +24,7 @@ const loading = ref(false);
 
 // Get user info from localStorage to determine storage strategy
 const getUserInfo = () => {
-  return JSON.parse(localStorage.getItem('qChromeUser') || 'null');
+  return JSON.parse(localStorage.getItem("qChromeUser") || "null");
 };
 
 const userInfo = ref(getUserInfo());
@@ -65,7 +69,7 @@ const fetchList = async () => {
 const syncList = async (newList) => {
   allList.value = newList;
   refreshCurrentList();
-  
+
   if (isLoggedIn.value) {
     // Sync to backend
     try {
@@ -99,8 +103,10 @@ const refreshCurrentList = () => {
   if (searchValue.value) {
     list = list.filter(
       (item) =>
-        item.name?.toLowerCase()?.indexOf(searchValue.value.toLowerCase()) !== -1 ||
-        item?.url?.toLowerCase()?.indexOf(searchValue.value.toLowerCase()) !== -1,
+        item.name?.toLowerCase()?.indexOf(searchValue.value.toLowerCase()) !==
+          -1 ||
+        item?.url?.toLowerCase()?.indexOf(searchValue.value.toLowerCase()) !==
+          -1,
     );
   }
 
@@ -145,7 +151,7 @@ const handleConfirm = async (data) => {
     // Manipulate memory list and sync
     nextList = [...allList.value];
     if (isEdit) {
-      const index = nextList.findIndex(item => item.key === obj.key);
+      const index = nextList.findIndex((item) => item.key === obj.key);
       if (index !== -1) nextList[index] = obj;
     } else {
       nextList.push(obj);
@@ -172,31 +178,34 @@ const handleConfirmDelete = async () => {
   if (itemToDelete.value) {
     let nextList;
     if (isLoggedIn.value) {
-       // Use dedicated remove API
-       try {
-         const res = await removeRemoteSite(userInfo.value._id, itemToDelete.value.key);
-         if (res.code === 0) {
-            nextList = res.data;
-            allList.value = nextList;
-            refreshCurrentList();
-         } else {
-            console.error("Failed to delete remote site:", res.msg);
-         }
-       } catch (err) {
-         console.error(err);
-       }
+      // Use dedicated remove API
+      try {
+        const res = await removeRemoteSite(
+          userInfo.value._id,
+          itemToDelete.value.key,
+        );
+        if (res.code === 0) {
+          nextList = res.data;
+          allList.value = nextList;
+          refreshCurrentList();
+        } else {
+          console.error("Failed to delete remote site:", res.msg);
+        }
+      } catch (err) {
+        console.error(err);
+      }
     } else {
-       nextList = await removeSite(itemToDelete.value?.key);
-       allList.value = nextList;
-       refreshCurrentList();
+      nextList = await removeSite(itemToDelete.value?.key);
+      allList.value = nextList;
+      refreshCurrentList();
     }
   }
   confirmDialogVisible.value = false;
 };
 
 // Listen for login/logout changes
-window.addEventListener('storage', (e) => {
-  if (e.key === 'qChromeUser') {
+window.addEventListener("storage", (e) => {
+  if (e.key === "qChromeUser") {
     userInfo.value = getUserInfo();
     fetchList();
   }
@@ -204,13 +213,12 @@ window.addEventListener('storage', (e) => {
 
 // Watch for user change via timer as a fallback for same-tab updates not triggering 'storage' event
 const checkUserInterval = setInterval(() => {
-   const newUser = getUserInfo();
-   if (JSON.stringify(newUser) !== JSON.stringify(userInfo.value)) {
-     userInfo.value = newUser;
-     fetchList();
-   }
+  const newUser = getUserInfo();
+  if (JSON.stringify(newUser) !== JSON.stringify(userInfo.value)) {
+    userInfo.value = newUser;
+    fetchList();
+  }
 }, 1000);
-
 
 onMounted(async () => {
   await fetchList();
@@ -248,10 +256,8 @@ defineExpose({
           {{ cat }}
         </div>
       </div>
-      
-      <div v-if="loading" class="loading-state">
-        加载中...
-      </div>
+
+      <div v-if="loading" class="loading-state">加载中...</div>
       <div v-else class="main_content_list">
         <SiteIcon
           v-for="(item, idx) in currentList"
@@ -266,7 +272,7 @@ defineExpose({
         />
       </div>
     </div>
-    
+
     <SiteAddDialog
       v-model:visible="addDialogVisible"
       :data="addDialogData"
@@ -285,10 +291,12 @@ defineExpose({
 <style scoped>
 .main {
   margin: 20px;
+  width: calc(100% - 40px);
+  height: calc(100% - 40px);
 }
 .main_content {
   max-width: 1210px;
-  height: calc(100% - 15vh);
+  height: 100%;
   padding: 10vh 0 5vh;
   margin: auto;
   display: flex;
@@ -347,6 +355,10 @@ defineExpose({
   overflow: auto;
   gap: 30px;
 }
+.main_content_list::-webkit-scrollbar {
+  display: none;
+}
+
 .loading-state {
   text-align: center;
   padding: 40px;
